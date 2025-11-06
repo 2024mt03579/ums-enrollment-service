@@ -23,6 +23,8 @@ Dockerfile
   └─ rabbitmq.yaml
 requirements.txt
 README.md
+LICENSE
+enrolment_Service.drawio
 ```
 
 #### Build and push Image:
