@@ -1,0 +1,51 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="28.2.9">
+  <diagram id="enrollment-service-corrected" name="Enrollment Service">
+    <mxGraphModel dx="1413" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rli809-taAv7RnArzLOX-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="es_box" target="es_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es_box" value="Enrollment Service&#xa;(Register/Drop, Waitlist, Saga Orchestrator)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3D9;strokeColor=#000000;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="40" width="440" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="es_api" value="API Endpoints:&#xa;POST /enrollments -&gt; RegisterCourse()&#xa;GET /enrollments/{id} -&gt; GetEnrollment()&#xa;DELETE /enrollments/{id} -&gt; DropCourse()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="240" y="150" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="es_db" value="Database (Postgres)&#xa;enrollments table:&#xa;- id, student_id, course_id, status, created_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7FFF0;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="100" y="310" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="es_student" value="Student Service (SYNC)&#xa;GET /students/{id} -&gt; eligibility, holds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8FFF0;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="520" y="310" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="es_course" value="Course Service (SYNC)&#xa;GET /courses/{id} -&gt; seat availability, prereqs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8FFF0;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="520" y="450" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="es_bus" value="Event Bus (Kafka)&lt;br&gt;Publishes: RegistrationPendingPayment, EnrollmentConfirmed, EnrollmentFailed&lt;br&gt;Consumes: PaymentConfirmed, PaymentFailed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F7FF;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="240" y="550" width="440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="es_notes" value="Enrollment as Orchestrator:&lt;br&gt;1. Validate student &amp;amp; course (SYNC)&lt;br&gt;2. Create enrollment record status=PENDING&lt;br&gt;3. Publish RegistrationPendingPayment&lt;br&gt;4. On PaymentConfirmed -&amp;gt; ConfirmEnrollment (status=CONFIRMED)&lt;br&gt;5. On PaymentFailed -&amp;gt; Compensate (release seat, status=FAILED)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#000000;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="730" y="40" width="360" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#000000;endArrow=block;" parent="1" source="es_api" target="es_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#000000;" parent="1" source="es_api" target="es_student" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#000000;" parent="1" source="es_api" target="es_course" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="410" />
+              <mxPoint x="670" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#000000;endArrow=block;" parent="1" source="es_api" target="es_bus" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
