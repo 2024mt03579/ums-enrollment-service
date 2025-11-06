@@ -29,17 +29,14 @@ def _process_payment_event(body: dict, db: Session):
             db.commit()
 
 def _consumer_thread(database_url: str, rabbitmq_url: str):
-    # connect DB
     database.init_db(database_url)
     db = database.SessionLocal()
     params = pika.URLParameters(rabbitmq_url)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()
     channel.exchange_declare(exchange="ums_events", exchange_type="topic", durable=True)
-    # create queue and bind to payment.* events
     result = channel.queue_declare(queue="", exclusive=True)
     queue_name = result.method.queue
-    # bind to payment events (assuming Payment service publishes to payment.events)
     channel.queue_bind(exchange="ums_events", queue=queue_name, routing_key="payment.events.#")
     print("Enrollment consumer waiting for payment events...")
     def callback(ch, method, properties, body):
