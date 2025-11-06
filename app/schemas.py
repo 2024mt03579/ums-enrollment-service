@@ -5,7 +5,7 @@ from datetime import datetime
 class EnrollmentCreate(BaseModel):
     student_id: str
     course_id: str
-    amount: Optional[float] = 0.0
+    amount: float
 
 class EnrollmentOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -15,3 +15,4 @@ class EnrollmentOut(BaseModel):
     course_id: str
     status: str
     created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
