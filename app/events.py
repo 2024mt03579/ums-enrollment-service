@@ -3,6 +3,7 @@ from app import models, database
 from sqlalchemy.orm import Session
 import os
 
+# Simple RabbitMQ publisher and consumer using pika (blocking) in background thread.
 def publish_event(rabbitmq_url: str, routing_key: str, event: dict):
     params = pika.URLParameters(rabbitmq_url)
     connection = pika.BlockingConnection(params)
@@ -13,6 +14,7 @@ def publish_event(rabbitmq_url: str, routing_key: str, event: dict):
     connection.close()
 
 def _process_payment_event(body: dict, db: Session):
+    # body expected to have type and payload
     etype = body.get("type")
     payload = body.get("payload", {})
     if etype == "PaymentConfirmed":
@@ -39,6 +41,7 @@ def _consumer_thread(database_url: str, rabbitmq_url: str):
     # create queue and bind to payment.* events
     result = channel.queue_declare(queue="", exclusive=True)
     queue_name = result.method.queue
+    # bind to payment events (assuming Payment service publishes to payment.events)
     channel.queue_bind(exchange="ums_events", queue=queue_name, routing_key="payment.events.#")
     print("Enrollment consumer waiting for payment events...")
     def callback(ch, method, properties, body):

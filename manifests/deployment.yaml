@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: enrollment
-          image: docker.io/dtummidibits/enrolment-service:latest
+          image: docker.io/dtummidibits/enrolment-service:5.0
           ports:
             - containerPort: 8000
           env:
@@ -31,18 +31,6 @@ spec:
           envFrom:
             - secretRef:
                 name: ums-secrets
-          readinessProbe:
-            httpGet:
-              path: /health   # implement /health in your app
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 20
           resources:
             requests:
               cpu: "200m"
