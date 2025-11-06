@@ -3,7 +3,6 @@ from app import models, database
 from sqlalchemy.orm import Session
 import os
 
-# Simple RabbitMQ publisher and consumer using pika (blocking) in background thread.
 def publish_event(rabbitmq_url: str, routing_key: str, event: dict):
     params = pika.URLParameters(rabbitmq_url)
     connection = pika.BlockingConnection(params)
@@ -14,7 +13,6 @@ def publish_event(rabbitmq_url: str, routing_key: str, event: dict):
     connection.close()
 
 def _process_payment_event(body: dict, db: Session):
-    # body expected to have type and payload
     etype = body.get("type")
     payload = body.get("payload", {})
     if etype == "PaymentConfirmed":

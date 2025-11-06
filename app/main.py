@@ -61,7 +61,6 @@ def health():
 # Create enrollment (register) -> PENDING, publish RegistrationPendingPayment
 @app.post("/enrollments", response_model=schemas.EnrollmentOut, status_code=201)
 def register_course(enrollment_in: schemas.EnrollmentCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    # (Optionally) you'd validate student/course via Student/Course services here
     enrollment = models.Enrollment(
         student_id=enrollment_in.student_id,
         course_id=enrollment_in.course_id,
